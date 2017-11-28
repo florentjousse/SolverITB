@@ -1,22 +1,22 @@
 #include "Variable.h"
-#include <algorithm>
-#include <iostream>
-#include <numeric>
 
 Variable::Variable()
 {
 	indice =0;
 	value = this;
 	domaine.resize(0);
+	marqueur = false;
 	std::iota(std::begin(domaine), std::end(domaine), 0);
 }
 
-Variable::Variable(double INF, double SUP,int _indice)
+Variable::Variable(double INF, double SUP,int _indice, std::shared_ptr<std::queue<Variable*>> p1)
 {
 	indice = _indice;
+	marqueur = false;
 	value = this;
 	domaine.resize(SUP - INF +1);
 	std::iota(std::begin(domaine), std::end(domaine), INF );
+	ptrQueue = p1;
 }
 
 void Variable::reduireDomaine(double val, int option)
@@ -24,6 +24,10 @@ void Variable::reduireDomaine(double val, int option)
 	if (option == 1) {
 		domaine.erase(std::remove(domaine.begin(), domaine.end(), val), domaine.end());
 		delta.insert(std::begin(delta), val);
+		if (!marqueur) {
+			ptrQueue.get()->push(this);
+			marqueur = true;
+		}
 	}
 	if (option == 2) {
 		for (auto i : domaine)
@@ -31,6 +35,12 @@ void Variable::reduireDomaine(double val, int option)
 		delta.erase(std::remove(delta.begin(), delta.end(), val), delta.end());
 		domaine.clear();
 		domaine.insert(domaine.begin(), val);
+		/*if (!marqueur) {
+			ptrQueue.get()->push(this);
+			marqueur = true;
+		}*/
+
+
 	}
 
 }
@@ -60,6 +70,10 @@ bool Variable::isEmptyDelta()
 {
 	return delta.size();
 }
+int Variable::sizeDomaine()
+{
+	return domaine.size();
+}
 void Variable::setValue(double _value)
 {
 	value = value; 
@@ -69,6 +83,19 @@ void Variable::setValue(double _value)
 int Variable::getIndice()
 {
 	return indice;
+}
+
+double Variable::getFirstEV()
+{
+	return domaine.at(0);
+}
+
+void Variable::resetMarqueur()
+{
+	if (marqueur)
+		marqueur = false;
+	else
+		marqueur = true;
 }
 
 std::ostream & operator<<(std::ostream & os, const Variable & dt)

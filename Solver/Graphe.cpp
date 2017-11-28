@@ -35,3 +35,8 @@ Graphe::Graphe(std::shared_ptr<std::vector<Variable>> p1, std::shared_ptr<std::v
 Graphe::~Graphe()
 {
 }
+
+std::vector<std::vector<int>> Graphe::getMatriceAdjacence()
+{
+	return matriceAdjacence;
+}
