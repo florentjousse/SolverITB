@@ -241,3 +241,4 @@ ModelManifest.xml
 # FAKE - F# Make
 .fake/
 /enc_temp_folder/bb22d71a99ef4bb1c8a2aab0f1c4d4c/Main.cpp
+/boost

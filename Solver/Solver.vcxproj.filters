@@ -21,13 +21,10 @@
     <ClInclude Include="Propagation.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="Contrainte.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
     <ClInclude Include="Graphe.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="ContraintePlus.h">
+    <ClInclude Include="ContrainteV2.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
   </ItemGroup>
@@ -41,13 +38,10 @@
     <ClCompile Include="Propagation.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
-    <ClCompile Include="Contrainte.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
     <ClCompile Include="Graphe.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
-    <ClCompile Include="ContraintePlus.cpp">
+    <ClCompile Include="ContrainteV2.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
   </ItemGroup>

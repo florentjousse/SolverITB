@@ -22,36 +22,24 @@ Variable::Variable(double INF, double SUP,int _indice, std::shared_ptr<std::queu
 void Variable::reduireDomaine(double val, int option)
 {	
 	if (option == 1) {
-		if (verifyDelta(val)) {
-			delta.insert(std::begin(delta), val);
-			domaine.erase(std::remove(domaine.begin(), domaine.end(), val), domaine.end());
-		}
-		deltaTemp.clear();
+
+		domaine.erase(std::remove(domaine.begin(), domaine.end(), val), domaine.end());
 		deltaTemp.insert(std::begin(deltaTemp), val);
-	//TODO verifier: pousser l'élément peut etre dans propagation
+	   //TODO verifier: pousser l'élément peut etre dans propagation
 		if (!marqueur) {
 			ptrQueue.get()->push(this);
 			marqueur = true;
 		}
 	}
 	if (option == 2) {
-		for (auto i : domaine)
-			if (verifyDelta(i)) {
-				delta.insert(std::begin(delta), i);
-			}
-		delta.erase(std::remove(delta.begin(), delta.end(), val), delta.end());
+
 		deltaTemp.clear();
 		for (auto i : domaine)
 				deltaTemp.insert(std::begin(deltaTemp), i);
 		deltaTemp.erase(std::remove(deltaTemp.begin(), deltaTemp.end(), val), deltaTemp.end());
 		domaine.clear();
 		domaine.insert(domaine.begin(), val);
-		/*if (!marqueur) {
-			ptrQueue.get()->push(this);
-			marqueur = true;
-		}*/
-
-
+	
 	}
 
 }
@@ -69,20 +57,13 @@ void Variable::printDelta()
 {
 	std::cout << "Delta "<<this<< " :";
 
-	for (auto i : delta)
+	for (auto i : deltaTemp)
 		std::cout << i << " ";
 	std::cout << "\n";
 }
 void Variable::resetDelta()
 {
-	for (auto i : domaine) {
-		delta.insert(delta.begin(), i);
-	}
-	domaine.clear();
-	for (auto i : delta) {
-		domaine.insert(domaine.end(), i);
-	}
-	delta.clear();
+	deltaTemp.clear();
 }
 void Variable::addToDelta(double val) {
 	delta.erase(std::remove(delta.begin(), delta.end(), val), delta.end());
@@ -127,12 +108,20 @@ bool Variable::getMarqueur()
 	return marqueur;
 }
 
+double Variable::getElemDomain(int indice)
+{
+	return domaine.at(indice);
+}
+
 std::ostream & operator<<(std::ostream & os, const Variable & dt)
 {
 	os << dt.value << " ";
 	return os;
 }
 
+
+
+//UNUSED
 bool  Variable::verifyDelta(double val) {
 	for (auto i : delta) {
 		if (i == val) {

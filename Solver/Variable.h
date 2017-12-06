@@ -22,6 +22,7 @@ public :
 	double getFirstEV();
 	void resetMarqueur();
 	bool getMarqueur();
+	double getElemDomain(int indice);
 private:
 	void setValue(double _value);
 	friend std::ostream& operator<<(std::ostream& os, const Variable& dt);

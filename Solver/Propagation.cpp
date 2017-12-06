@@ -1,6 +1,7 @@
 #include "Propagation.h"
+#include "boost\any.hpp"
 
-void Propagation::chercher(std::vector<Contrainte> listeContraintes,Graphe graphe, std::shared_ptr<std::queue<Variable*>> p1,std::vector<Variable*> ptrVariables,int nombreVars)
+void Propagation::chercher(std::vector<ContrainteV2> listeContraintes,Graphe graphe, std::shared_ptr<std::queue<Variable*>> p1,std::vector<Variable*> ptrVariables,int nombreVars)
 {	
 	int count = 0;
 	int woua = 0;
@@ -9,8 +10,8 @@ void Propagation::chercher(std::vector<Contrainte> listeContraintes,Graphe graph
 	while (p1.get()->size() != 0) {
 		precV1 = v1;
 		Variable* v1 = p1.get()->front();
-		woua = v1->getFirstEV();
-		p1.get()->front()->resetMarqueur();
+		woua = v1->getFirstEV();//first elem of domain
+		p1.get()->front()->resetMarqueur();// Flag if the variable is in queue
 		std::cout << "\n";
 		v1->reduireDomaine(woua, 2);
 		count++;
@@ -37,11 +38,11 @@ void Propagation::chercher(std::vector<Contrainte> listeContraintes,Graphe graph
 				//ptrVariables.at(i)->resetDelta();
 				ptrVariables.at(i)->addToDelta(value);//TODO rename addtodomaine
 			
-				
 				std::cout << "nouveau domaine:\n";
 
 				ptrVariables.at(i)->printDomaine();
 				std::cout << "\n";
+
 
 			}
 			count = 0;
@@ -49,33 +50,52 @@ void Propagation::chercher(std::vector<Contrainte> listeContraintes,Graphe graph
 		}
 		else {
 			p1.get()->pop();
-
 		}
 	}
 	std::cout << "\nFIN : PAS DE RESULTAT / \n";
-
-
 }
 
-int Propagation::propager(std::vector<Contrainte> listeContraintes, Variable* v1, Graphe graphe, std::shared_ptr<std::queue<Variable*>> p1, std::vector<Variable*> ptrVariables, int nombreVars)
+int Propagation::propager(std::vector<ContrainteV2> listeContraintes, Variable* v1, Graphe graphe, std::shared_ptr<std::queue<Variable*>> p1, std::vector<Variable*> ptrVariables, int nombreVars)
 {
 	for (int i = 0; i < nombreVars; i++) {
-		if (graphe.getMatriceAdjacence().at(i).at(v1->getIndice())) {
+		if (graphe.getMatriceAdjacence().at(i).at(v1->getIndice())=="!=") { 
+			ptrVariables.at(i)->resetDelta();
 			ptrVariables.at(i)->reduireDomaine(v1->getFirstEV(), 1);
 			//ptrVariables.at(i)->reduireDomaine(v1->getFirstEV() + graphe.getMatriceAdjacence().at(i).at(v1->getIndice()), 1);
-			if (!ptrVariables.at(i)->getMarqueur() && !ptrVariables.at(i)->sizeDomaine() != 1 ) {
-				p1.get()->push(ptrVariables.at(i));
-				ptrVariables.at(i)->resetMarqueur();
-			}
+		
+		}
 
-			std::cout << "variable :[" << ptrVariables.at(i)->getIndice()+ 1 << "] = ";
-			ptrVariables.at(i)->printDomaine();
-			ptrVariables.at(i)->printDelta();
-
-			if (ptrVariables.at(i)->sizeDomaine() == 0){
-				return 0;
+		if (graphe.getMatriceAdjacence().at(i).at(v1->getIndice()) == ">") {
+			ptrVariables.at(i)->resetDelta();
+			int aoi=0;//
+			for (int itt = 0; itt < ptrVariables.at(i)->sizeDomaine()+aoi; itt++) {
+				if (ptrVariables.at(i)->getElemDomain(itt-aoi) >= v1->getFirstEV()) {
+					ptrVariables.at(i)->reduireDomaine(ptrVariables.at(i)->getElemDomain(itt-aoi), 1);
+					aoi++;
+				}
 			}
 		}
+		if (graphe.getMatriceAdjacence().at(i).at(v1->getIndice()) == "<") {
+			ptrVariables.at(i)->resetDelta();
+			int aoi = 0;//
+			for (int itt = 0; itt < ptrVariables.at(i)->sizeDomaine() + aoi; itt++) {
+				if (ptrVariables.at(i)->getElemDomain(itt - aoi) <= v1->getFirstEV()) {
+					ptrVariables.at(i)->reduireDomaine(ptrVariables.at(i)->getElemDomain(itt - aoi), 1);
+					aoi++;
+				}
+			}
+		}
+		if (!ptrVariables.at(i)->getMarqueur() && !ptrVariables.at(i)->sizeDomaine() != 1) {
+			p1.get()->push(ptrVariables.at(i));
+			ptrVariables.at(i)->resetMarqueur();
+		}
+		std::cout << "variable :[" << ptrVariables.at(i)->getIndice() + 1 << "] = ";
+		ptrVariables.at(i)->printDomaine();
+		ptrVariables.at(i)->printDelta();
+		if (ptrVariables.at(i)->sizeDomaine() == 0) {
+			return 0;
+		}
+
 	}
 
 	/*for (int i = 0; i < nombreVars; i++) {

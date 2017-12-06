@@ -1,7 +1,6 @@
 #include <iostream>
 #include "Variable.h"
-#include "Contrainte.h"
-#include "ContraintePlus.h"
+#include "ContrainteV2.h"
 #include "Propagation.h"
 #include "Graphe.h"
 #include <memory>
@@ -20,7 +19,7 @@ int main() {
 	Variable v1(1, 5, 0, sharedQv);
 	Variable v2(2, 4, 1, sharedQv);
 	Variable v3(1, 4, 2, sharedQv);
-	Variable v4(1, 5, 3, sharedQv);
+	Variable v4(1, 10, 3, sharedQv);
 	Variable v5(1, 3, 4, sharedQv);
 
 	sharedQv.get()->push(&v1);
@@ -66,24 +65,28 @@ int main() {
 	//======================================================
 	//Ici on a nos variables sur le heap, car gérés par un vector pas performant mais on verra plus tard TODO
 
-	std::vector<Contrainte> *listeContraintes = new std::vector<Contrainte>();
-/*	listeContraintes->insert(listeContraintes->begin(), Contrainte(v1, v2));
-	listeContraintes->insert(listeContraintes->begin(), Contrainte(v1, v4));
-	listeContraintes->insert(listeContraintes->begin(), Contrainte(v1, v3));
-	listeContraintes->insert(listeContraintes->begin(), Contrainte(v2, v3));
-	listeContraintes->insert(listeContraintes->begin(), Contrainte(v1, v5));
-	listeContraintes->insert(listeContraintes->begin(), Contrainte(v2, v5));
-	listeContraintes->insert(listeContraintes->begin(), Contrainte(v1, v4));*/
-
+	std::vector<ContrainteV2> *listeContraintes = new std::vector<ContrainteV2>();
+/*	listeContraintes->insert(listeContraintes->begin(), ContrainteV2(v1, v2));
+	listeContraintes->insert(listeContraintes->begin(), ContrainteV2(v1, v4));
+	listeContraintes->insert(listeContraintes->begin(), ContrainteV2(v1, v3));
+	listeContraintes->insert(listeContraintes->begin(), ContrainteV2(v2, v3));
+	listeContraintes->insert(listeContraintes->begin(), ContrainteV2(v1, v5));
+	listeContraintes->insert(listeContraintes->begin(), ContrainteV2(v2, v5));
+	listeContraintes->insert(listeContraintes->begin(), ContrainteV2(v1, v4));*/
+	/*
 	for (int i = 0; i < nombreVars - 1; i++) {
 		for (int j = i + 1; j < nombreVars; j++) {
-			listeContraintes->insert(listeContraintes->begin(), Contrainte(listeVariables->at(i), listeVariables->at(j)));
-		//	listeContraintes->insert(listeContraintes->begin(), ContraintePlus(listeVariables->at(i), listeVariables->at(j), j-i));
-			//listeContraintes->insert(listeContraintes->begin(), Contrainte(listeVariables->"at(i), listeVariables->at(j)));*/
+			listeContraintes->insert(listeContraintes->begin(), ContrainteV2(listeVariables->at(i),"!=" ,listeVariables->at(j)));
+			//listeContraintes->insert(listeContraintes->begin(), ContraintePlus(listeVariables->at(i), listeVariables->at(j), j-i));
+			//listeContraintes->insert(listeContraintes->begin(), ContraintePlus(listeVariables->"at(i), listeVariables->at(j), j+i));
 		}
+	}*/
+	for (auto i : *listeVariables) {
+		i.printDomaine();
+		std::cout << "\n";
 	}
-	listeContraintes->insert(listeContraintes->begin(), Contrainte(listeVariables->at(2), listeVariables->at(1)));
-	std::shared_ptr<std::vector<Contrainte>> sharedListContraintes(listeContraintes);
+    listeContraintes->insert(listeContraintes->begin(), ContrainteV2(listeVariables->at(1),"<", listeVariables->at(4)));
+	std::shared_ptr<std::vector<ContrainteV2>> sharedListContraintes(listeContraintes);
 	Graphe graphe(sharedListVariable, sharedListContraintes,nombreVars);
 	Propagation::chercher(*listeContraintes, graphe,sharedQv,ptrVariables,nombreVars);
 	system("pause");

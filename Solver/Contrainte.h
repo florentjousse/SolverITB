@@ -14,6 +14,7 @@ protected:
 	Variable v1;
 	Variable v2;
 private:
+	
 	//v1 != v2 pour l'instant unique contrainte possible
 
 	friend std::ostream& operator<<(std::ostream& os, const Contrainte& dt);
