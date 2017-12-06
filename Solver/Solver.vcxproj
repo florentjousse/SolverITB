@@ -115,12 +115,14 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Contrainte.h" />
+    <ClInclude Include="ContraintePlus.h" />
     <ClInclude Include="Graphe.h" />
     <ClInclude Include="Propagation.h" />
     <ClInclude Include="Variable.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Contrainte.cpp" />
+    <ClCompile Include="ContraintePlus.cpp" />
     <ClCompile Include="Graphe.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Propagation.cpp" />

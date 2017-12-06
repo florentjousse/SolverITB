@@ -15,18 +15,22 @@ public :
 	void printDomaine();
 	void printDelta();
 	void resetDelta();
+	void addToDelta(double val);
 	bool isEmptyDelta();
 	int sizeDomaine();
 	int getIndice();
 	double getFirstEV();
 	void resetMarqueur();
-
+	bool getMarqueur();
 private:
 	void setValue(double _value);
 	friend std::ostream& operator<<(std::ostream& os, const Variable& dt);
+	 bool verifyDelta(double val);
 	std::shared_ptr<std::queue<Variable*>> ptrQueue;
 	std::vector<double> domaine;
 	std::vector<double> delta;
+	std::vector<double> deltaTemp;
+
 	Variable * value; 
 	bool marqueur;
 	int indice;

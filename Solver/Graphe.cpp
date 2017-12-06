@@ -3,14 +3,14 @@
 
 
 
-Graphe::Graphe(std::shared_ptr<std::vector<Variable>> p1, std::shared_ptr<std::vector<Contrainte>> p2)
+Graphe::Graphe(std::shared_ptr<std::vector<Variable>> p1, std::shared_ptr<std::vector<Contrainte>> p2,int size)
 {
 	listeVariables = p1;
 	listeContraintes = p2;
 	int j= 0;
-	matriceAdjacence.resize(4);
+	matriceAdjacence.resize(size);
 	for (auto i : matriceAdjacence) {
-		matriceAdjacence.at(j).resize(4);
+		matriceAdjacence.at(j).resize(size);
 		j++;
 	}
 	/*
@@ -23,11 +23,14 @@ Graphe::Graphe(std::shared_ptr<std::vector<Variable>> p1, std::shared_ptr<std::v
 	 3   (m n o p))
 
 		*/
+
 	for (auto contrainte : *listeContraintes) {
 		int v1 = contrainte.getV1().getIndice();
 		int v2 = contrainte.getV2().getIndice();
-		matriceAdjacence.at(v1).at(v2) = 1;
-		matriceAdjacence.at(v2).at(v1) = 1;
+		std::vector<double> vect1;
+		std::vector<double> vect2;
+		matriceAdjacence.at(v1).at(v2) = contrainte.returnImpossible();
+		matriceAdjacence.at(v2).at(v1) = contrainte.returnImpossible();//
 
 	}
 }
@@ -36,7 +39,7 @@ Graphe::~Graphe()
 {
 }
 
-std::vector<std::vector<int>> Graphe::getMatriceAdjacence()
+std::vector<std::vector<double>> Graphe::getMatriceAdjacence()
 {
 	return matriceAdjacence;
 }

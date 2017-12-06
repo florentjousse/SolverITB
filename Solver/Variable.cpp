@@ -22,8 +22,13 @@ Variable::Variable(double INF, double SUP,int _indice, std::shared_ptr<std::queu
 void Variable::reduireDomaine(double val, int option)
 {	
 	if (option == 1) {
-		domaine.erase(std::remove(domaine.begin(), domaine.end(), val), domaine.end());
-		delta.insert(std::begin(delta), val);
+		if (verifyDelta(val)) {
+			delta.insert(std::begin(delta), val);
+			domaine.erase(std::remove(domaine.begin(), domaine.end(), val), domaine.end());
+		}
+		deltaTemp.clear();
+		deltaTemp.insert(std::begin(deltaTemp), val);
+	//TODO verifier: pousser l'élément peut etre dans propagation
 		if (!marqueur) {
 			ptrQueue.get()->push(this);
 			marqueur = true;
@@ -31,8 +36,14 @@ void Variable::reduireDomaine(double val, int option)
 	}
 	if (option == 2) {
 		for (auto i : domaine)
-			delta.insert(std::begin(delta), i);
+			if (verifyDelta(i)) {
+				delta.insert(std::begin(delta), i);
+			}
 		delta.erase(std::remove(delta.begin(), delta.end(), val), delta.end());
+		deltaTemp.clear();
+		for (auto i : domaine)
+				deltaTemp.insert(std::begin(deltaTemp), i);
+		deltaTemp.erase(std::remove(deltaTemp.begin(), deltaTemp.end(), val), deltaTemp.end());
 		domaine.clear();
 		domaine.insert(domaine.begin(), val);
 		/*if (!marqueur) {
@@ -64,7 +75,20 @@ void Variable::printDelta()
 }
 void Variable::resetDelta()
 {
+	for (auto i : domaine) {
+		delta.insert(delta.begin(), i);
+	}
+	domaine.clear();
+	for (auto i : delta) {
+		domaine.insert(domaine.end(), i);
+	}
 	delta.clear();
+}
+void Variable::addToDelta(double val) {
+	delta.erase(std::remove(delta.begin(), delta.end(), val), delta.end());
+	for (auto i : deltaTemp) {
+		domaine.insert(domaine.begin(), i);
+	}
 }
 bool Variable::isEmptyDelta()
 {
@@ -98,8 +122,32 @@ void Variable::resetMarqueur()
 		marqueur = true;
 }
 
+bool Variable::getMarqueur()
+{
+	return marqueur;
+}
+
 std::ostream & operator<<(std::ostream & os, const Variable & dt)
 {
 	os << dt.value << " ";
 	return os;
+}
+
+bool  Variable::verifyDelta(double val) {
+	for (auto i : delta) {
+		if (i == val) {
+			return  false;
+		}
+	}
+	int flag = 0;
+	for (auto i : domaine) {
+		if (i == val) {
+			flag++;
+		}
+		
+	}
+	if (flag==0) {
+		return false;
+	}
+	return true;
 }
