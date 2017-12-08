@@ -4,6 +4,9 @@
 #include "Propagation.h"
 #include "Graphe.h"
 #include <memory>
+#include "ContrainteBinaire.h"
+#include "ContrainteTernaire.h"
+
 int main() {
 	std::queue<Variable*> *qV= new std::queue<Variable*>();
 	std::shared_ptr<std::queue<Variable*>> sharedQv(qV);
@@ -17,10 +20,10 @@ int main() {
 	//================================================================
 
 	Variable v1(1, 5, 0, sharedQv);
-	Variable v2(2, 4, 1, sharedQv);
-	Variable v3(1, 4, 2, sharedQv);
-	Variable v4(1, 10, 3, sharedQv);
-	Variable v5(1, 3, 4, sharedQv);
+	Variable v2(1, 5, 1, sharedQv);
+	Variable v3(1, 5, 2, sharedQv);
+	Variable v4(1, 5, 3, sharedQv);
+	Variable v5(1, 5, 4, sharedQv);
 
 	sharedQv.get()->push(&v1);
 	v1.resetMarqueur();
@@ -35,16 +38,6 @@ int main() {
 
 	
 	int nombreVars = ptrVariables.size();
-
-	/*
-	v1.printDomaine();
-	v1.printDelta();
-	v1.reduireDomaine(8, 2);
-	v1.printDomaine();
-	v1.printDelta();
-	v1.resetDelta();
-	v1.printDelta();
-	}*/
 
 
 	//Ici on a nos variables sur le heap, car gérés par un vector pas performant mais on verra plus tard TODO
@@ -65,28 +58,29 @@ int main() {
 	//======================================================
 	//Ici on a nos variables sur le heap, car gérés par un vector pas performant mais on verra plus tard TODO
 
-	std::vector<ContrainteV2> *listeContraintes = new std::vector<ContrainteV2>();
-/*	listeContraintes->insert(listeContraintes->begin(), ContrainteV2(v1, v2));
-	listeContraintes->insert(listeContraintes->begin(), ContrainteV2(v1, v4));
-	listeContraintes->insert(listeContraintes->begin(), ContrainteV2(v1, v3));
-	listeContraintes->insert(listeContraintes->begin(), ContrainteV2(v2, v3));
-	listeContraintes->insert(listeContraintes->begin(), ContrainteV2(v1, v5));
-	listeContraintes->insert(listeContraintes->begin(), ContrainteV2(v2, v5));
-	listeContraintes->insert(listeContraintes->begin(), ContrainteV2(v1, v4));*/
-	/*
+	std::vector<ContrainteV2*> *listeContraintes = new std::vector<ContrainteV2*>();
+	
+	
 	for (int i = 0; i < nombreVars - 1; i++) {
 		for (int j = i + 1; j < nombreVars; j++) {
-			listeContraintes->insert(listeContraintes->begin(), ContrainteV2(listeVariables->at(i),"!=" ,listeVariables->at(j)));
-			//listeContraintes->insert(listeContraintes->begin(), ContraintePlus(listeVariables->at(i), listeVariables->at(j), j-i));
-			//listeContraintes->insert(listeContraintes->begin(), ContraintePlus(listeVariables->"at(i), listeVariables->at(j), j+i));
+		ContrainteBinaire *cb= new ContrainteBinaire(listeVariables->at(i), "!=", listeVariables->at(j));
+		Variable vconst(j-i);
+		ContrainteTernaire *ct1 = new ContrainteTernaire(listeVariables->at(i), "!=", listeVariables->at(j),"-",vconst);
+		ContrainteTernaire *ct2 = new ContrainteTernaire(listeVariables->at(i), "!=", listeVariables->at(j), "+", vconst);
+		listeContraintes->insert(listeContraintes->begin(), cb);
+		listeContraintes->insert(listeContraintes->begin(), ct1);
+		listeContraintes->insert(listeContraintes->begin(), ct2);
+
+		
 		}
-	}*/
+	}
 	for (auto i : *listeVariables) {
 		i.printDomaine();
 		std::cout << "\n";
 	}
-    listeContraintes->insert(listeContraintes->begin(), ContrainteV2(listeVariables->at(1),"<", listeVariables->at(4)));
-	std::shared_ptr<std::vector<ContrainteV2>> sharedListContraintes(listeContraintes);
+	
+
+	std::shared_ptr<std::vector<ContrainteV2*>> sharedListContraintes(listeContraintes);
 	Graphe graphe(sharedListVariable, sharedListContraintes,nombreVars);
 	Propagation::chercher(*listeContraintes, graphe,sharedQv,ptrVariables,nombreVars);
 	system("pause");

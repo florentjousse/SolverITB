@@ -10,27 +10,28 @@
 class Variable {
 public :
 	Variable();
-	Variable(double borneInf, double borneSup,int _indice, std::shared_ptr<std::queue<Variable*>> p1);
-	void reduireDomaine(double val, int option);//option 1 = laisser que val dans domaine   ||| option 2 = enlever val du domaine 
+	Variable(int contante);
+	Variable(int borneInf, int borneSup,int _indice, std::shared_ptr<std::queue<Variable*>> p1);
+	void reduireDomaine(int val, int option);//option 1 = laisser que val dans domaine   ||| option 2 = enlever val du domaine 
 	void printDomaine();
 	void printDelta();
 	void resetDelta();
-	void addToDelta(double val);
+	void addToDelta(int val);
 	bool isEmptyDelta();
 	int sizeDomaine();
 	int getIndice();
-	double getFirstEV();
+	int getFirstEV();
 	void resetMarqueur();
 	bool getMarqueur();
-	double getElemDomain(int indice);
+	int getElemDomain(int indice);
 private:
-	void setValue(double _value);
+	void setValue(int _value);
 	friend std::ostream& operator<<(std::ostream& os, const Variable& dt);
-	 bool verifyDelta(double val);
+	 bool verifyDelta(int val);
 	std::shared_ptr<std::queue<Variable*>> ptrQueue;
-	std::vector<double> domaine;
-	std::vector<double> delta;
-	std::vector<double> deltaTemp;
+	std::vector<int> domaine;
+	std::vector<int> delta;
+	std::vector<int> deltaTemp;
 
 	Variable * value; 
 	bool marqueur;

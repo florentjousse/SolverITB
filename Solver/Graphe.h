@@ -8,13 +8,13 @@
 class Graphe
 {
 public:
-	Graphe( std::shared_ptr<std::vector<Variable>>  p1, std::shared_ptr<std::vector<ContrainteV2>>  p2,int size);
+	Graphe( std::shared_ptr<std::vector<Variable>>  p1, std::shared_ptr<std::vector<ContrainteV2*>>  p2,int size);
 	~Graphe();
 	std::vector<std::vector<std::string>> getMatriceAdjacence(); //matrice de domaine
 
 private:
 	std::shared_ptr<std::vector<Variable>> listeVariables;
-	std::shared_ptr<std::vector<ContrainteV2>> listeContraintes;
-	std::vector<std::vector<double>> matriceAdjacence;
+	std::shared_ptr<std::vector<ContrainteV2*>> listeContraintes;
+	std::vector<std::vector<int>> matriceAdjacence;
 	std::vector<std::vector<std::string>> matriceAdjacencev2;
 };

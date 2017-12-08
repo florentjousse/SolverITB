@@ -1,7 +1,9 @@
 #include "Propagation.h"
 #include "boost\any.hpp"
+#include <regex>
 
-void Propagation::chercher(std::vector<ContrainteV2> listeContraintes,Graphe graphe, std::shared_ptr<std::queue<Variable*>> p1,std::vector<Variable*> ptrVariables,int nombreVars)
+void Propagation::chercher(std::vector<ContrainteV2*> listeContraintes,Graphe graphe, std::shared_ptr<std::queue<Variable*>> p1,std::vector<Variable*> ptrVariables,int nombreVars)
+
 {	
 	int count = 0;
 	int woua = 0;
@@ -33,17 +35,13 @@ void Propagation::chercher(std::vector<ContrainteV2> listeContraintes,Graphe gra
 				ptrVariables.at(i)->printDomaine();
 				int size = ptrVariables.at(i)->sizeDomaine();
 				std::cout << "delta:\n";
-				double value = v1->getFirstEV();
+				int value = v1->getFirstEV();
 				ptrVariables.at(i)->printDelta();
 				//ptrVariables.at(i)->resetDelta();
 				ptrVariables.at(i)->addToDelta(value);//TODO rename addtodomaine
-			
 				std::cout << "nouveau domaine:\n";
-
 				ptrVariables.at(i)->printDomaine();
 				std::cout << "\n";
-
-
 			}
 			count = 0;
 			std::cout << "backtrack" << "\n";
@@ -55,16 +53,17 @@ void Propagation::chercher(std::vector<ContrainteV2> listeContraintes,Graphe gra
 	std::cout << "\nFIN : PAS DE RESULTAT / \n";
 }
 
-int Propagation::propager(std::vector<ContrainteV2> listeContraintes, Variable* v1, Graphe graphe, std::shared_ptr<std::queue<Variable*>> p1, std::vector<Variable*> ptrVariables, int nombreVars)
-{
+int Propagation::propager(std::vector<ContrainteV2*> listeContraintes, Variable* v1, Graphe graphe, std::shared_ptr<std::queue<Variable*>> p1, std::vector<Variable*> ptrVariables, int nombreVars)
+{ 
+	std::regex pattern1{ "z!=-" };
+	std::regex pattern2{ "z!=+" };
+
 	for (int i = 0; i < nombreVars; i++) {
 		if (graphe.getMatriceAdjacence().at(i).at(v1->getIndice())=="!=") { 
 			ptrVariables.at(i)->resetDelta();
 			ptrVariables.at(i)->reduireDomaine(v1->getFirstEV(), 1);
 			//ptrVariables.at(i)->reduireDomaine(v1->getFirstEV() + graphe.getMatriceAdjacence().at(i).at(v1->getIndice()), 1);
-		
 		}
-
 		if (graphe.getMatriceAdjacence().at(i).at(v1->getIndice()) == ">") {
 			ptrVariables.at(i)->resetDelta();
 			int aoi=0;//
@@ -84,6 +83,19 @@ int Propagation::propager(std::vector<ContrainteV2> listeContraintes, Variable* 
 					aoi++;
 				}
 			}
+		}
+	
+		if (std::regex_match(graphe.getMatriceAdjacence().at(i).at(v1->getIndice()), pattern1)) {//case"x!=y-b"
+			ptrVariables.at(i)->resetDelta();
+			std::string str = graphe.getMatriceAdjacence().at(i).at(v1->getIndice());
+			str.erase(0, 4);
+			ptrVariables.at(i)->reduireDomaine(v1->getFirstEV() - std::stoi(str), 1);
+		}
+		if (std::regex_match(graphe.getMatriceAdjacence().at(i).at(v1->getIndice()), pattern2)) {//case"x!=y+b"
+			ptrVariables.at(i)->resetDelta();
+			std::string str = graphe.getMatriceAdjacence().at(i).at(v1->getIndice());
+			str.erase(0, 4);
+			ptrVariables.at(i)->reduireDomaine(v1->getFirstEV()+std::stoi(str), 1);
 		}
 		if (!ptrVariables.at(i)->getMarqueur() && !ptrVariables.at(i)->sizeDomaine() != 1) {
 			p1.get()->push(ptrVariables.at(i));

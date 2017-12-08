@@ -9,7 +9,16 @@ Variable::Variable()
 	std::iota(std::begin(domaine), std::end(domaine), 0);
 }
 
-Variable::Variable(double INF, double SUP,int _indice, std::shared_ptr<std::queue<Variable*>> p1)
+Variable::Variable(int contante)
+{
+	indice = NULL;
+	marqueur = false;
+	value = this;
+	domaine.resize(1);
+	domaine.insert(domaine.begin(), contante);
+}
+
+Variable::Variable(int INF, int SUP,int _indice, std::shared_ptr<std::queue<Variable*>> p1)
 {
 	indice = _indice;
 	marqueur = false;
@@ -19,7 +28,7 @@ Variable::Variable(double INF, double SUP,int _indice, std::shared_ptr<std::queu
 	ptrQueue = p1;
 }
 
-void Variable::reduireDomaine(double val, int option)
+void Variable::reduireDomaine(int val, int option)
 {	
 	if (option == 1) {
 
@@ -65,7 +74,7 @@ void Variable::resetDelta()
 {
 	deltaTemp.clear();
 }
-void Variable::addToDelta(double val) {
+void Variable::addToDelta(int val) {
 	delta.erase(std::remove(delta.begin(), delta.end(), val), delta.end());
 	for (auto i : deltaTemp) {
 		domaine.insert(domaine.begin(), i);
@@ -79,7 +88,7 @@ int Variable::sizeDomaine()
 {
 	return domaine.size();
 }
-void Variable::setValue(double _value)
+void Variable::setValue(int _value)
 {
 	value = value; 
 
@@ -90,7 +99,7 @@ int Variable::getIndice()
 	return indice;
 }
 
-double Variable::getFirstEV()
+int Variable::getFirstEV()
 {
 	return domaine.at(0);
 }
@@ -108,7 +117,7 @@ bool Variable::getMarqueur()
 	return marqueur;
 }
 
-double Variable::getElemDomain(int indice)
+int Variable::getElemDomain(int indice)
 {
 	return domaine.at(indice);
 }
@@ -122,7 +131,7 @@ std::ostream & operator<<(std::ostream & os, const Variable & dt)
 
 
 //UNUSED
-bool  Variable::verifyDelta(double val) {
+bool  Variable::verifyDelta(int val) {
 	for (auto i : delta) {
 		if (i == val) {
 			return  false;
