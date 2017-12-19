@@ -2,7 +2,7 @@
 
 
 
-ContrainteTernaire::ContrainteTernaire(Variable _v1, std::string _op, Variable _v2, std::string _op2, Variable _v3)
+ContrainteTernaire::ContrainteTernaire(Variable *_v1, std::string _op, Variable *_v2, std::string _op2, Variable _v3)
 {
 	v1 = _v1;
 	op = _op;
@@ -19,7 +19,7 @@ ContrainteTernaire::~ContrainteTernaire()
 
 std::string ContrainteTernaire::returnImpossible()
 {
-	std::string str2 = std::to_string(v2.getFirstEV());
+	std::string str2 = std::to_string(v3.getFirstEV());
 	std::string str = "z"+op + op2 + str2;
 	return str;
 }

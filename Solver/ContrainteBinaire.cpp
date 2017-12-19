@@ -2,7 +2,7 @@
 
 
 
-ContrainteBinaire::ContrainteBinaire(Variable _v1, std::string _op, Variable _v2)
+ContrainteBinaire::ContrainteBinaire(Variable *_v1, std::string _op, Variable *_v2)
 {
 	v1 = _v1;
 	op = _op;
@@ -13,12 +13,12 @@ std::string ContrainteBinaire::returnImpossible()
 {
 	return op;
 }
-Variable ContrainteBinaire::getV1()
+Variable* ContrainteBinaire::getV1()
 {
 	return v1;
 }
 
-Variable ContrainteBinaire::getV2()
+Variable* ContrainteBinaire::getV2()
 {
 	return v2;
 }

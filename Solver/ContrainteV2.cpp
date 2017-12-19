@@ -2,12 +2,12 @@
 
 
 
-Variable ContrainteV2::getV1()
+Variable* ContrainteV2::getV1()
 {
 	return v1;
 }
 
-Variable ContrainteV2::getV2()
+Variable* ContrainteV2::getV2()
 {
 	return v2;
 }

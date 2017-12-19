@@ -1,5 +1,5 @@
 #include "Variable.h"
-
+#include <stdlib.h>
 Variable::Variable()
 {
 	indice =0;
@@ -8,7 +8,16 @@ Variable::Variable()
 	marqueur = false;
 	std::iota(std::begin(domaine), std::end(domaine), 0);
 }
+void Variable::setLabel(int _label) {
+	label = _label;
+}
+void Variable::setDomaine(std::vector<int> _domaine) {
+	domaine = _domaine;
+}
+int Variable::getLabel() {
+	return label;
 
+}
 Variable::Variable(int contante)
 {
 	indice = NULL;
@@ -25,27 +34,41 @@ Variable::Variable(int INF, int SUP,int _indice, std::shared_ptr<std::queue<Vari
 	value = this;
 	domaine.resize(SUP - INF +1);
 	std::iota(std::begin(domaine), std::end(domaine), INF );
+	int ind = 0;
 	ptrQueue = p1;
 }
-
+std::vector<int> Variable::getDelta() {
+	return deltaStr;
+}
 void Variable::reduireDomaine(int val, int option)
 {	
 	if (option == 1) {
-
-		domaine.erase(std::remove(domaine.begin(), domaine.end(), val), domaine.end());
-		deltaTemp.insert(std::begin(deltaTemp), val);
-	   //TODO verifier: pousser l'élément peut etre dans propagation
-		if (!marqueur) {
-			ptrQueue.get()->push(this);
-			marqueur = true;
+		for (auto i : domaine) {
+			if (i == val) {
+				if (deltaStr.size() == 0 ) {
+					//std::vector<int> temp;
+					//temp.push_back(val);
+					deltaStr.push_back(val);
+				}
+				else {
+					deltaStr.push_back(val);
+				}
+				domaine.erase(std::remove(domaine.begin(), domaine.end(), val), domaine.end());
+				break;
+			}
 		}
 	}
 	if (option == 2) {
-
-		deltaTemp.clear();
-		for (auto i : domaine)
-				deltaTemp.insert(std::begin(deltaTemp), i);
-		deltaTemp.erase(std::remove(deltaTemp.begin(), deltaTemp.end(), val), deltaTemp.end());
+		
+		//deltaTemp.clear();
+		//std::vector<int> temp;
+		for (auto i : domaine) {
+			deltaStr.push_back(i);
+		}
+	//	deltaStr.push_back(temp);
+		//int size = deltaStr.size() - 1;
+		deltaStr.erase(std::remove(deltaStr.begin(), deltaStr.end(), val), deltaStr.end());
+		//ind++;
 		domaine.clear();
 		domaine.insert(domaine.begin(), val);
 	
@@ -55,7 +78,7 @@ void Variable::reduireDomaine(int val, int option)
 
 void Variable::printDomaine()
 {
-	std::cout << "Domaine " << this << " :";
+std::cout << "Domaine var[" << this->indice +1 << "]:";
 
 	for (auto i : domaine)
 		std::cout << i << " ";
@@ -64,25 +87,41 @@ void Variable::printDomaine()
 
 void Variable::printDelta()
 {
-	std::cout << "Delta "<<this<< " :";
+	std::cout << "Delta var["<<this->indice +1<< "] :";
 
-	for (auto i : deltaTemp)
-		std::cout << i << " ";
+	for (auto i : deltaStr) {
+		std::cout << " i ";
+	}
+		
 	std::cout << "\n";
+}
+
+void Variable::pushBackn()
+{
+	//deltaStr.push_back(std::vector<int>());
+}
+void Variable::popBackn()
+{
+	deltaStr.pop_back();
+
 }
 void Variable::resetDelta()
 {
-	deltaTemp.clear();
-}
-void Variable::addToDelta(int val) {
-	delta.erase(std::remove(delta.begin(), delta.end(), val), delta.end());
-	for (auto i : deltaTemp) {
-		domaine.insert(domaine.begin(), i);
+	if (deltaStr.size() != 0) {
+		for (auto i : deltaStr)
+			domaine.push_back(i);
+		deltaStr.pop_back();
 	}
+}
+void Variable::addToDomaine(int val) {
+	//deltaStr.back().erase(std::remove(deltaStr.back().begin(), deltaStr.back().end(), val), deltaStr.back().end());
+
+		domaine.insert(domaine.begin(), val);
+	
 }
 bool Variable::isEmptyDelta()
 {
-	return delta.size();
+	return deltaStr.size();
 }
 int Variable::sizeDomaine()
 {
@@ -117,6 +156,11 @@ bool Variable::getMarqueur()
 	return marqueur;
 }
 
+std::vector<int> Variable::getDomaine()
+{
+	return domaine;
+}
+
 int Variable::getElemDomain(int indice)
 {
 	return domaine.at(indice);
@@ -131,21 +175,3 @@ std::ostream & operator<<(std::ostream & os, const Variable & dt)
 
 
 //UNUSED
-bool  Variable::verifyDelta(int val) {
-	for (auto i : delta) {
-		if (i == val) {
-			return  false;
-		}
-	}
-	int flag = 0;
-	for (auto i : domaine) {
-		if (i == val) {
-			flag++;
-		}
-		
-	}
-	if (flag==0) {
-		return false;
-	}
-	return true;
-}
