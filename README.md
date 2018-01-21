@@ -24,4 +24,4 @@ This return statement allow us to abort the recursive stack: without the return 
 ```cpp
 	return 1;
 ```
-![alt text]
+![alt text](https://github.com/cryckx/SolverITB/blob/master/bench.png)
