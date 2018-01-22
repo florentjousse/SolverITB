@@ -29,5 +29,13 @@ Benchmarks where we can see the improvement of AC-3 to solve N-Queen :
 
 ![alt text](https://github.com/cryckx/SolverITB/blob/master/bench.png)
 
-A significant way to improve the performance of the solver might be to add some algorithm to solve global constraint such that "alldifferent". Indeed, there are polynomial algorithms to solve an alldifferent constraint ( problem equivalent to strongly connected components) and N-Queen problem can ben express with 3 allDifferent constraints:
+A significant way to improve the performance of the solver might be to add some algorithm to solve global constraint like "alldifferent". Indeed, there are polynomial algorithms to solve an alldifferent constraint ( problem equivalent to strongly connected components) and N-Queen problem can ben express with 3 allDifferent constraints:
 
+we introduce auxiliary variables xi and yi
+```
+xi = li -i  yi = li + i  1<i<n
+allDifferent(l1,...,ln)
+allDifferent(x1,..,xn)
+allDifferent(y1,...,yn)
+```
+where the li are the variables wich represent the position of the queen.
